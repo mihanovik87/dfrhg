@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POSkультура - Обслуживание кассовых аппаратов</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+    .logo-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .service-arrow {
+      transition: transform 0.3s ease;
+    }
+    .service-arrow.open {
+      transform: rotate(180deg);
+    }
+    /* Стили для модального окна */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1f2937;
+    }
+    .modal-close {
+      font-size: 1.8rem;
+      color: #9ca3af;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #4b5563;
+    }
+    .modal-body {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+    .modal-footer {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+    .modal-btn {
+      background-color: #2563eb;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+    .modal-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    /* Исправление: цвет текста в форме */
+    #contactForm input,
+    #contactForm textarea,
+    #contactForm select {
+      color: #1f2937;
+    }
+    #contactForm ::placeholder {
+      color: #6b7280;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center space-x-2">
+          <div class="w-20 h-20 rounded-lg flex items-center justify-center">
+            <img src="img/logo.png" alt="Логотип" class="w-full h-full object-cover rounded-lg">
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900 logo-text">POSkультура</h1>
+            <p class="text-xs text-gray-500">Обслуживание ККТ</p>
+          </div>
+        </div>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#services" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Услуги</a>
+          <a href="#benefits" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Преимущества</a>
+          <a href="#testimonials" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Отзывы</a>
+          <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Контакты</a>
+        </nav>
+        <button id="menuToggle" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+          <div class="w-6 h-6 flex flex-col justify-center space-y-1">
+            <div class="w-full h-0.5 bg-gray-600"></div>
+            <div class="w-full h-0.5 bg-gray-600"></div>
+            <div class="w-full h-0.5 bg-gray-600"></div>
+          </div>
+        </button>
+      </div>
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-200 py-4 hidden">
+        <div class="flex flex-col space-y-4 px-4">
+          <a href="#services" class="text-gray-700 hover:text-blue-600 py-2">Услуги</a>
+          <a href="#benefits" class="text-gray-700 hover:text-blue-600 py-2">Преимущества</a>
+          <a href="#testimonials" class="text-gray-700 hover:text-blue-600 py-2">Отзывы</a>
+          <a href="#contact" class="text-gray-700 hover:text-blue-600 py-2">Контакты</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight logo-text">
+              Профессиональное обслуживание
+              <span class="text-yellow-300"> кассовых аппаратов</span>
+            </h1>
+            <p class="text-xl text-blue-100 leading-relaxed">
+              Удалённые услуги по регистрации, настройке и обслуживанию ККТ
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="#contact"
+              class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2">
+              <span>Связаться с нами</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" class="lucide lucide-arrow-right">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#services"
+              class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+              Наши услуги
+            </a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8">
+            <div class="text-center">
+              <div class="text-2xl font-bold">700000+</div>
+              <div class="text-blue-100 text-sm">Клиентов</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold">24+</div>
+              <div class="text-blue-100 text-sm">Лет опыта</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold">99%</div>
+              <div class="text-blue-100 text-sm">Удовлетворенность</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold">24/7</div>
+              <div class="text-blue-100 text-sm">Поддержка</div>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+            <img src="img/kassa.png" alt="Кассовый аппарат" class="w-full h-64 object-cover rounded-lg mb-6">
+            <div class="space-y-3">
+              <div class="flex items-center space-x-2 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                  stroke-width="2" class="lucide lucide-check-circle text-green-300">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span>Сертифицированные специалисты</span>
+              </div>
+              <div class="flex items-center space-x-2 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                  stroke-width="2" class="lucide lucide-check-circle text-green-300">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span>Гарантия на все работы</span>
+              </div>
+              <div class="flex items-center space-x-2 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                  stroke-width="2" class="lucide lucide-check-circle text-green-300">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span>Оригинальные запчасти</span>
+              </div>
+              <div class="flex items-center space-x-2 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                  stroke-width="2" class="lucide lucide-check-circle text-green-300">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span>Быстрое реагирование</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 logo-text">
+          Наши услуги
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Удалённое и выездное обслуживание кассового оборудования — быстро, надёжно, с гарантией
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Услуга 1: Регистрация удаленно -->
+        <div class="service-card bg-white rounded-xl p-6 border-2 border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-file-plus text-blue-600">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+            </svg>
+            <div class="text-sm font-semibold text-gray-500">1 500 ₽</div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Регистрация удаленно</h3>
+          <p class="text-gray-600 mb-4">Оформление ККТ в ФНС без вашего участия</p>
+          <button type="button" onclick="openModal(1)" class="text-blue-600 text-sm font-medium flex items-center space-x-1">
+            <span>Подробнее</span>
+            <svg class="lucide lucide-chevron-down w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <!-- Услуга 2: Замена ФН удаленно -->
+        <div class="service-card bg-white rounded-xl p-6 border-2 border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-refresh-cw text-blue-600">
+              <path d="M23 4v6h-6" />
+              <path d="M1 20v-6h6" />
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+              <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" />
+            </svg>
+            <div class="text-sm font-semibold text-gray-500">1 000 ₽</div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Замена ФН удаленно</h3>
+          <p class="text-gray-600 mb-4">Замена фискального накопителя без выезда</p>
+          <button type="button" onclick="openModal(2)" class="text-blue-600 text-sm font-medium flex items-center space-x-1">
+            <span>Подробнее</span>
+            <svg class="lucide lucide-chevron-down w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <!-- Услуга 3: Диагностика ККТ -->
+        <div class="service-card bg-white rounded-xl p-6 border-2 border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-search text-blue-600">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <div class="text-sm font-semibold text-gray-500">1 000 ₽</div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Диагностика ККТ</h3>
+          <p class="text-gray-600 mb-4">Точная диагностика неисправностей кассы</p>
+          <button type="button" onclick="openModal(3)" class="text-blue-600 text-sm font-medium flex items-center space-x-1">
+            <span>Подробнее</span>
+            <svg class="lucide lucide-chevron-down w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <!-- Услуга 4: Перерегистрация удаленно -->
+        <div class="service-card bg-white rounded-xl p-6 border-2 border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-file-symlink text-blue-600">
+              <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3" />
+              <path d="M14 2v6h6" />
+              <path d="M3 11h10" />
+              <path d="M8 16V9" />
+              <path d="m2 16 4 4 4-4" />
+            </svg>
+            <div class="text-sm font-semibold text-gray-500">1 000 ₽</div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Перерегистрация удаленно</h3>
+          <p class="text-gray-600 mb-4">Изменение данных ККТ в ФНС без выезда</p>
+          <button type="button" onclick="openModal(4)" class="text-blue-600 text-sm font-medium flex items-center space-x-1">
+            <span>Подробнее</span>
+            <svg class="lucide lucide-chevron-down w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <!-- Услуга 5: Выезд к клиенту -->
+        <div class="service-card bg-white rounded-xl p-6 border-2 border-gray-200 transition-all duration-300 hover:shadow-xl hover:border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="lucide lucide-truck text-blue-600">
+              <path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" />
+              <path d="M13 6v12" />
+              <path d="M13 12h8" />
+              <path d="M18 17v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-1" />
+              <circle cx="18" cy="17" r="3" />
+              <circle cx="8" cy="17" r="3" />
+            </svg>
+            <div class="text-sm font-semibold text-gray-500">от 1000 ₽</div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Выезд к клиенту</h3>
+          <p class="text-gray-600 mb-4">Профессиональный выезд специалиста для настройки или ремонта</p>
+          <button type="button" onclick="openModal(5)" class="text-blue-600 text-sm font-medium flex items-center space-x-1">
+            <span>Подробнее</span>
+            <svg class="lucide lucide-chevron-down w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Модальное окно -->
+  <div id="serviceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">Заголовок услуги</h3>
+        <button id="closeModal" class="modal-close">&times;</button>
+      </div>
+      <div id="modalContent" class="modal-body">
+        <!-- Текст будет подставляться динамически -->
+      </div>
+      <div class="modal-footer">
+        <button id="closeModalBtn" class="modal-btn">Понятно</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <section id="benefits" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 logo-text">
+          Почему выбирают нас?
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Мы предлагаем лучшие условия и качество обслуживания кассового оборудования
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock text-blue-600">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            Быстрое реагирование
+          </h3>
+          <p class="text-gray-600">
+            Реагируем на заявки в течение 30 минут
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-shield text-blue-600">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            Гарантия качества
+          </h3>
+          <p class="text-gray-600">
+            Даем гарантию на все выполненные работы
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-trending-up text-blue-600">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+              <polyline points="17 6 23 6 23 12" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            Оптимизация расходов
+          </h3>
+          <p class="text-gray-600">
+            Помогаем сэкономить до 30% на обслуживании
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-blue-600">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            Профессиональная команда
+          </h3>
+          <p class="text-gray-600">
+            Только сертифицированные специалисты
+          </p>
+        </div>
+      </div>
+      <div class="mt-16 bg-white rounded-2xl p-8 shadow-lg">
+        <div class="grid lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 logo-text">
+              Гарантия качества обслуживания
+            </h3>
+            <p class="text-gray-600 mb-6">
+              Мы используем только оригинальные запчасти и современное оборудование для диагностики и ремонта.
+              Все наши специалисты проходят регулярное обучение и имеют необходимые сертификаты.
+            </p>
+            <div class="space-y-3">
+              <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check-circle text-green-500">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span class="text-gray-700">Сертифицированные специалисты</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check-circle text-green-500">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span class="text-gray-700">Оригинальные запчасти</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check-circle text-green-500">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span class="text-gray-700">Гарантия на работы</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check-circle text-green-500">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <path d="m9 11 3 3L22 4" />
+                </svg>
+                <span class="text-gray-700">Современное оборудование</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <img src="img/speshl.png" alt="Команда специалистов" class="rounded-lg shadow-lg">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 logo-text">
+          Отзывы наших клиентов
+        </h2>
+        <p class="text-xl text-gray-600">
+          Что говорят о нас владельцы бизнеса
+        </p>
+      </div>
+      <div class="max-w-4xl mx-auto">
+        <div id="testimonialContainer"
+          class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 md:p-12 relative">
+          <div class="absolute top-4 right-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-star text-yellow-400">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </div>
+          <blockquote id="testimonialText" class="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed italic">
+            "Я эту компанию хенде хох во все штрасен. А их инженер Кравец вобще полная швайне."
+          </blockquote>
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-lg">А</span>
+            </div>
+            <div>
+              <div id="testimonialName" class="font-semibold text-gray-900">
+                Рицберг
+              </div>
+              <div id="testimonialCompany" class="text-gray-600">
+                Кофейня 'Аромат'
+              </div>
+              <div id="testimonialRating" class="flex space-x-1 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-star text-yellow-400">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-star text-yellow-400">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-star text-yellow-400">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-star text-yellow-400">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-star text-yellow-400">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="testimonialIndicators" class="flex justify-center space-x-2 mt-8">
+          <button class="w-3 h-3 bg-blue-600 rounded-full"></button>
+          <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+          <button class="w-3 h-3 bg-gray-300 rounded-full"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6 logo-text">
+            Свяжитесь с нами
+          </h2>
+          <p class="text-xl text-blue-100 mb-8">
+            Готовы начать сотрудничество? Оставьте заявку, и мы свяжемся с вами в течение 30 минут.
+          </p>
+          <div class="space-y-6">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-semibold">Телефон</div>
+                <div class="text-blue-100">+7 966 850-92-88</div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-semibold">Email</div>
+                <div class="text-blue-100">info@poskultura.ru</div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-semibold">Адрес</div>
+                <div class="text-blue-100">г. Москва, ул. Висотная, д. 9</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 p-6 bg-white/10 rounded-xl">
+            <div class="flex items-center space-x-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-check-circle text-green-300">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
+              <span class="font-semibold">Гарантия ответа в течение 30 минут</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-check-circle text-green-300">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
+              <span class="font-semibold">Бесплатная консультация</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-8">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6 logo-text">
+            Оставить заявку
+          </h3>
+          <form id="contactForm" action="https://formspree.io/f/xzzvkodb" method="POST" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Имя
+              </label>
+              <input type="text" name="name"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Ваше имя" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Телефон
+              </label>
+              <input type="tel" name="phone"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="+7 (___) ___-__-__" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Услуга
+              </label>
+              <select name="service"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option>Выберите услугу</option>
+                <option>Регистрация удаленно</option>
+                <option>Замена ФН удаленно</option>
+                <option>Диагностика ККТ</option>
+                <option>Перерегистрация удаленно</option>
+                <option>Выезд к клиенту</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Сообщение
+              </label>
+              <textarea name="message" rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Опишите вашу ситуацию..."></textarea>
+            </div>
+            <button type="submit"
+              class="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+              Отправить заявку
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-2 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-smartphone text-white">
+                <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                <path d="M12 18h.01" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold logo-text">POSkультура</h3>
+              <p class="text-gray-400 text-sm">Обслуживание ККТ</p>
+            </div>
+          </div>
+          <p class="text-gray-400 mb-6">
+            Профессиональное обслуживание кассового оборудования для вашего бизнеса.
+            Быстро, надежно, с гарантией качества.
+          </p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Услуги</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#services" class="hover:text-blue-600 transition-colors">Регистрация удаленно</a></li>
+            <li><a href="#services" class="hover:text-blue-600 transition-colors">Замена ФН удаленно</a></li>
+            <li><a href="#services" class="hover:text-blue-600 transition-colors">Диагностика ККТ</a></li>
+            <li><a href="#services" class="hover:text-blue-600 transition-colors">Перерегистрация удаленно</a></li>
+            <li><a href="#services" class="hover:text-blue-600 transition-colors">Выезд (МСК, СПб, Ростов)</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Контакты</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li class="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              <span>+7 966 850-92-88</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail">
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              <span>info@poskultura.ru</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>г. Москва, ул. Висотная, д. 9</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2000 POSkультура. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // === Модальное окно ===
+    function openModal(id) {
+      const services = {
+        1: {
+          title: "Регистрация удаленно",
+          content: `
+            <p><strong>Описание:</strong> Оформление ККТ в ФНС без вашего участия.</p>
+            <p><strong>Что входит:</strong></p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>Подача заявления в ФНС через личный кабинет</li>
+              <li>Подключение к ОФД</li>
+              <li>Полный пакет документов</li>
+            </ul>
+            <p class="mt-2"><strong>Срок:</strong> 1 рабочий день</p>
+            <p><strong>Гарантия:</strong> есть</p>
+          `
+        },
+        2: {
+          title: "Замена ФН удаленно",
+          content: `
+            <p><strong>Описание:</strong> Замена фискального накопителя без выезда.</p>
+            <p><strong>Что входит:</strong></p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>Удалённая замена через ОФД</li>
+              <li>Для всех моделей ККТ</li>
+              <li>Подтверждение из ФНС</li>
+            </ul>
+            <p class="mt-2"><strong>Срок:</strong> 1–2 часа</p>
+            <p><strong>Гарантия:</strong> есть</p>
+          `
+        },
+        3: {
+          title: "Диагностика ККТ",
+          content: `
+            <p><strong>Описание:</strong> Точная диагностика неисправностей кассы.</p>
+            <p><strong>Что входит:</strong></p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>Полная проверка работоспособности</li>
+              <li>Выявление ошибок и сбоев</li>
+              <li>Рекомендации по устранению</li>
+            </ul>
+            <p class="mt-2"><strong>Срок:</strong> 1 час</p>
+            <p><strong>Гарантия:</strong> нет (без ремонта)</p>
+          `
+        },
+        4: {
+          title: "Перерегистрация удаленно",
+          content: `
+            <p><strong>Описание:</strong> Изменение данных ККТ в ФНС без выезда.</p>
+            <p><strong>Что входит:</strong></p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>Смена адреса, ОКВЭД, ИНН и др.</li>
+              <li>Подача заявления в ФНС</li>
+              <li>Получение подтверждения</li>
+            </ul>
+            <p class="mt-2"><strong>Срок:</strong> 1–2 дня</p>
+            <p><strong>Гарантия:</strong> есть</p>
+          `
+        },
+        5: {
+          title: "Выезд к клиенту",
+          content: `
+            <p><strong>Описание:</strong> Профессиональный выезд специалиста к вам для настройки, ремонта или обслуживания ККТ.</p>
+            <p><strong>Что входит:</strong></p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>Диагностика и ремонт на месте</li>
+              <li>Оказание услуг</li>
+              <li>Обучение персонала</li>
+              <li>Замена комплектующих (при наличии)</li>
+            </ul>
+            <p class="mt-2"><strong>Срок:</strong> в течение 24 часов или по записи</p>
+            <p><strong>Гарантия:</strong> есть, на все выполненные работы</p>
+            <p class="mt-2"><strong>Зона выездов:</strong> Москва, Санкт-Петербург, Ростов-на-Дону</p>
+            <p><strong>Важно:</strong> Услуги по всей России доступны удалённо</p>
+          `
+        }
+      };
+      const service = services[id];
+      if (!service) return;
+      document.getElementById("modalTitle").textContent = service.title;
+      document.getElementById("modalContent").innerHTML = service.content;
+      document.getElementById("serviceModal").style.display = "flex";
+    }
+
+    // Закрытие модального окна
+    document.getElementById("closeModal").addEventListener("click", () => {
+      document.getElementById("serviceModal").style.display = "none";
+    });
+    document.getElementById("closeModalBtn").addEventListener("click", () => {
+      document.getElementById("serviceModal").style.display = "none";
+    });
+    // Закрытие по клику вне окна
+    document.getElementById("serviceModal").addEventListener("click", (e) => {
+      if (e.target.id === "serviceModal") {
+        document.getElementById("serviceModal").style.display = "none";
+      }
+    });
+
+    // Отзывы
+    const testimonials = [
+      {
+        text: "Отличная команда! Быстро установили кассовый аппарат, настроили все под нашу специфику. Работаем уже год без нареканий.",
+        name: "Анна Петрова",
+        company: "Кофейня 'Аромат'"
+      },
+      {
+        text: "Регулярное ТО помогло избежать серьезных поломок. Специалисты ответственные и профессиональные.",
+        name: "Дмитрий Сидоров",
+        company: "Магазин 'Товары для дома'"
+      },
+      {
+        text: "Быстро отреагировали на поломку, отремонтировали в тот же день. Рекомендую всем владельцам бизнеса!",
+        name: "Елена Кузнецова",
+        company: "Ресторан 'Вкусно'"
+      }
+    ];
+    let currentTestimonial = 0;
+    const testimonialText = document.getElementById('testimonialText');
+    const testimonialName = document.getElementById('testimonialName');
+    const testimonialCompany = document.getElementById('testimonialCompany');
+    const testimonialIndicators = document.getElementById('testimonialIndicators').children;
+
+    function showTestimonial(index) {
+      currentTestimonial = index;
+      const t = testimonials[index];
+      testimonialText.textContent = t.text;
+      testimonialName.textContent = t.name;
+      testimonialCompany.textContent = t.company;
+      for (let i = 0; i < testimonialIndicators.length; i++) {
+        testimonialIndicators[i].className = i === index ? 'w-3 h-3 bg-blue-600 rounded-full' : 'w-3 h-3 bg-gray-300 rounded-full';
+      }
+    }
+
+    setInterval(() => {
+      currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+      showTestimonial(currentTestimonial);
+    }, 5000);
+
+    // Форма: улучшенный фидбэк после отправки
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      setTimeout(() => {
+        this.innerHTML = `
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-6 rounded-lg text-center">
+            <strong>Спасибо за заявку!</strong><br>
+            Мы свяжемся с вами в течение 30 минут.
+          </div>
+        `;
+      }, 1000);
+    });
+
+    // Плавный скролл
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({
+            top: target.offsetTop - 100,
+            behavior: 'smooth'
+          });
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
